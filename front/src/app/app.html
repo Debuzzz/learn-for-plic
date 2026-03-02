@@ -1,0 +1,160 @@
+<style>
+  * { box-sizing: border-box; }
+
+  body { margin: 0; }
+
+  .page {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  h1 { font-size: 1.8rem; margin: 0 0 0.5rem; }
+  h2 { font-size: 1.2rem; margin: 0 0 0.75rem; }
+
+  .card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  label { font-size: 0.875rem; color: #555; }
+
+  input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  input:focus { outline: 2px solid #dd0031; border-color: transparent; }
+
+  button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    align-self: flex-start;
+  }
+
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:not(:disabled):hover { opacity: 0.82; }
+
+  .btn-primary { background: #dd0031; color: #fff; }
+  .btn-danger  { background: #b71c1c; color: #fff; }
+  .btn-ghost   { background: #f5f5f5; color: #333; border: 1px solid #ccc; }
+
+  .msg-ok  { color: #2e7d32; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.9rem; }
+  .msg-err { color: #c62828; background: #ffebee; border: 1px solid #ef9a9a; border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.9rem; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; }
+  th { color: #777; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .empty { color: #999; font-style: italic; }
+</style>
+
+<div class="page">
+  <h1>App Test — API</h1>
+
+  <!-- Test Hello -->
+  <div class="card">
+    <h2>Test GET /</h2>
+    <button class="btn-ghost" (click)="testApi()" [disabled]="helloLoading()">
+      {{ helloLoading() ? 'Chargement...' : 'Appeler GET /' }}
+    </button>
+    @if (helloResponse()) {
+      <p class="msg-ok">Réponse : {{ helloResponse() }}</p>
+    }
+    @if (helloError()) {
+      <p class="msg-err">{{ helloError() }}</p>
+    }
+  </div>
+
+  <!-- Créer un utilisateur -->
+  <div class="card">
+    <h2>Créer un utilisateur</h2>
+    <div class="form-row">
+      <label for="name">Nom</label>
+      <input id="name" type="text" placeholder="John Doe"
+        [ngModel]="createName()" (ngModelChange)="createName.set($event)" />
+    </div>
+    <div class="form-row">
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="john@example.com"
+        [ngModel]="createEmail()" (ngModelChange)="createEmail.set($event)" />
+    </div>
+    <button class="btn-primary"
+      (click)="createUser()"
+      [disabled]="createLoading() || !createName() || !createEmail()">
+      {{ createLoading() ? 'Création...' : 'Créer' }}
+    </button>
+    @if (createError()) {
+      <p class="msg-err">{{ createError() }}</p>
+    }
+  </div>
+
+  <!-- Supprimer un utilisateur -->
+  <div class="card">
+    <h2>Supprimer un utilisateur</h2>
+    <div class="form-row">
+      <label for="deleteId">ID de l'utilisateur</label>
+      <input id="deleteId" type="number" placeholder="1"
+        [ngModel]="deleteId()" (ngModelChange)="deleteId.set($event)" />
+    </div>
+    <button class="btn-danger"
+      (click)="deleteUser()"
+      [disabled]="deleteLoading() || !deleteId()">
+      {{ deleteLoading() ? 'Suppression...' : 'Supprimer' }}
+    </button>
+    @if (deleteError()) {
+      <p class="msg-err">{{ deleteError() }}</p>
+    }
+  </div>
+
+  <!-- Liste des utilisateurs -->
+  <div class="card">
+    <h2>Utilisateurs en DB
+      <button class="btn-ghost" style="font-size:0.8rem; padding: 0.3rem 0.75rem; margin-left: 0.75rem" (click)="loadUsers()">
+        Rafraîchir
+      </button>
+    </h2>
+    @if (users().length === 0) {
+      <p class="empty">Aucun utilisateur.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Nom</th><th>Email</th><th>Créé le</th></tr>
+        </thead>
+        <tbody>
+          @for (u of users(); track u.id) {
+            <tr>
+              <td>{{ u.id }}</td>
+              <td>{{ u.name }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.createdAt | date:'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+<router-outlet />
