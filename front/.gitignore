@@ -48,3 +48,4 @@ Thumbs.db
 
 # Fichier généré à partir de .env — contient potentiellement des clés API
 src/environments/environment.ts
+src/environments/environment.development.ts
