@@ -42,3 +42,9 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Variables d'environnement — ne jamais committer
+.env
+
+# Fichier généré à partir de .env — contient potentiellement des clés API
+src/environments/environment.ts

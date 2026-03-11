@@ -1,0 +1,68 @@
+<h2>Carte Google Maps & Événements</h2>
+
+@if (mapError()) {
+  <p class="msg-err">{{ mapError() }}</p>
+}
+
+<gmp-map
+  class="google-map"
+  [attr.center]="mapCenter"
+  zoom="10"
+  [attr.map-id]="mapId">
+      <gmp-basic-place-autocomplete
+        slot="control-inline-start-block-start"></gmp-basic-place-autocomplete>
+</gmp-map>
+
+@if (showAddButton()) {
+  <div style="margin-top: 1rem;">
+    <p><strong>{{ selectedPlace()?.name }}</strong></p>
+    <button
+      class="btn-primary"
+      style="margin-right: 0.5rem;"
+      (click)="addSelectedPlace()">
+      Ajouter cette position à la map
+    </button>
+    <button
+      class="btn-ghost"
+      (click)="selectedPlace.set(null); showAddButton.set(false)">
+      Annuler
+    </button>
+  </div>
+}
+
+@if (events().length > 0) {
+  <div style="margin-top: 1.5rem;">
+    <h3 style="margin: 0 0 0.75rem; font-size: 1rem;">Événements enregistrés ({{ events().length }})</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid #eee;">
+          <th style="text-align: left; padding: 0.5rem 0.75rem; color: #777; font-weight: 600;">Titre</th>
+          <th style="text-align: left; padding: 0.5rem 0.75rem; color: #777; font-weight: 600;">Position</th>
+          <th style="text-align: left; padding: 0.5rem 0.75rem; color: #777; font-weight: 600;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (event of events(); track event.title; let i = $index) {
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 0.5rem 0.75rem;">{{ event.title }}</td>
+            <td style="padding: 0.5rem 0.75rem;">{{ event.lat.toFixed(4) }}, {{ event.lng.toFixed(4) }}</td>
+            <td style="padding: 0.5rem 0.75rem;">
+              <button
+                class="btn-danger"
+                style="padding: 0.3rem 0.75rem; font-size: 0.8rem;"
+                (click)="removeEvent(i)">
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <button
+      class="btn-ghost"
+      style="margin-top: 0.75rem; font-size: 0.9rem;"
+      (click)="clearAllEvents()">
+      Effacer tous les événements
+    </button>
+  </div>
+}

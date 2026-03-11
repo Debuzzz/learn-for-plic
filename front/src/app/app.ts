@@ -3,12 +3,13 @@ import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { ApiService, User } from './api.service';
+import { GoogleMapComponent } from './google-map/google-map.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FormsModule, DatePipe],
+  imports: [RouterOutlet, FormsModule, DatePipe, GoogleMapComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App implements OnInit {
   private readonly apiService = inject(ApiService);
